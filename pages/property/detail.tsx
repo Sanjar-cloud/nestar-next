@@ -54,8 +54,8 @@ const PropertyDetail: NextPage = ({ initialComment, ...props }: any) => {
 	const [commentTotal, setCommentTotal] = useState<number>(0);
 	const [insertCommentData, setInsertCommentData] = useState<CommentInput>({
 		commentGroup: CommentGroup.PROPERTY,
-		commentContent: '',
-		commentRefId: '',
+		commentContent: '', //text yozilganda qabul qilyaoti spreade operator orwali
+		commentRefId: '', // router queri id
 	});
 
 	/** APOLLO REQUESTS **/
@@ -131,14 +131,14 @@ const PropertyDetail: NextPage = ({ initialComment, ...props }: any) => {
 			});
 			setInsertCommentData({
 				...insertCommentData,
-				commentRefId: router.query.id as string,
+				commentRefId: router.query.id as string, // properyrefid shu yerda qabul qilindi create comment uchun router query id dan
 			});
 		}
 	}, [router]);
 
 	useEffect(() => {
 		if (commentInquiry.search.commentRefId) {
-			getCommentsRefetch({ input: commentInquiry });
+			getCommentsRefetch({ input: commentInquiry }); // propert id orqali unga tegilshli commnet lardi qayta refetch qilib beradi
 		}
 	}, [commentInquiry]);
 
@@ -182,9 +182,9 @@ const PropertyDetail: NextPage = ({ initialComment, ...props }: any) => {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 			await createComment({ variables: { input: insertCommentData } });
 
-			setInsertCommentData({ ...insertCommentData, commentContent: '' });
+			setInsertCommentData({ ...insertCommentData, commentContent: '' }); // review text yozilsa spreade operator orqali value qabul qilyapti commnetcontent ni
 
-			await getCommentsRefetch({ input: commentInquiry });
+			await getCommentsRefetch({ input: commentInquiry }); // use effect qayta isjga tushyapti va datafetch bolyapti property ga tegishli commnet
 		} catch (err: any) {
 			await sweetErrorHandling(err);
 		}
