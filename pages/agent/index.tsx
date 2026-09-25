@@ -58,8 +58,8 @@ const AgentList: NextPage = ({ initialInput, ...props }: any) => {
 	/** LIFECYCLES **/
 	useEffect(() => {
 		if (router.query.input) {
-			const input_obj = JSON.parse(router?.query?.input as string);
-			setSearchFilter(input_obj);
+			const input_obj = JSON.parse(router?.query?.input as string); // input ==> filter yoki serach frontenda
+			setSearchFilter(input_obj); // user kiritgan Filter yoki Search qiymat bilan serachfilter boyitildi
 		} else
 			router.replace(`/agent?input=${JSON.stringify(searchFilter)}`, `/agent?input=${JSON.stringify(searchFilter)}`);
 
