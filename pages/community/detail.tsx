@@ -102,7 +102,7 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
 	} = useQuery(GET_COMMENTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: {
-			input: searchFilter,
+			input: searchFilter, // ozgargan article id search filter ni yangilab beradi useeffect bilan
 		},
 		notifyOnNetworkStatusChange: true,
 		onCompleted(data: any) {
@@ -113,7 +113,7 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
 
 	/** LIFECYCLES **/
 	useEffect(() => {
-		if (articleId) setSearchFilter({ ...searchFilter, search: { commentRefId: articleId } });
+		if (articleId) setSearchFilter({ ...searchFilter, search: { commentRefId: articleId } }); // qayta ishlaydi article ozgsra
 	}, [articleId]);
 
 	/** HANDLERS **/
