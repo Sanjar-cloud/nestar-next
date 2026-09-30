@@ -11,7 +11,7 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
 
 function getHeaders() {
 	const headers = {} as HeadersInit;
-	const token = getJwtToken();
+	const token = getJwtToken(); // LocalStorage.accessToken => BACKEND uchun kerak
 	// @ts-ignore
 	if (token) headers['Authorization'] = `Bearer ${token}`;
 	return headers;
@@ -28,13 +28,42 @@ const tokenRefreshLink = new TokenRefreshLink({
 	},
 });
 
+// Custom WebSocket client
+class LoggingWebSocket {
+	private socket: WebSocket;
+
+	constructor(url: string) {
+		this.socket = new WebSocket(url);
+
+		this.socket.onopen = () => {
+			console.log('WebSocket connection!');
+		};
+
+		this.socket.onmessage = (msg) => {
+			console.log('WebSocket message:', msg.data);
+		};
+
+		this.socket.onerror = (error) => {
+			console.log('WebSocket, error:', error);
+		};
+	}
+
+	send(data: string | ArrayBuffer | SharedArrayBuffer | Blob | ArrayBufferView) {
+		this.socket.send(data);
+	}
+
+	close() {
+		this.socket.close();
+	}
+}
+
 function createIsomorphicLink() {
 	if (typeof window !== 'undefined') {
 		const authLink = new ApolloLink((operation, forward) => {
 			operation.setContext(({ headers = {} }) => ({
 				headers: {
 					...headers,
-					...getHeaders(),
+					...getHeaders(), // bu yerda Headera token eklenir
 				},
 			}));
 			console.warn('requesting.. ', operation);
@@ -56,6 +85,7 @@ function createIsomorphicLink() {
 					return { headers: getHeaders() };
 				},
 			},
+			webSocketImpl: LoggingWebSocket,
 		});
 
 		const errorLink = onError(({ graphQLErrors, networkError, response }) => {
